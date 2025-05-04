@@ -55,6 +55,11 @@ body {
     height: 200px;
     margin: 16px;
     background-color: rgb(60, 60, 60);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem; /* Dimensione delle emoji */
+  
 }
 
 .emoji {

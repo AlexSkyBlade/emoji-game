@@ -1,6 +1,8 @@
 const squares = document.querySelectorAll('.square');
 const score = document.querySelector('#score');
 const timeLeft = document.querySelector('#time-left');
+const emojis = ['🍎', '🍌', '🍒', '🍇', '🍉', '🍊', '🍋', '🍍', '🥭', '🥝'];
+const correctEmoji = '🍎'; // L'emoji corretta da colpire
 
 let result = 0;
 let currentTime = 60;
@@ -10,16 +12,30 @@ let timerId;
 // commento da eliminare
 
 function randomSquare() {
-    // Puliamo tutti i quadrati
+    // Rimuovi tutte le emoji dai quadrati
     squares.forEach((square) => {
-        square.classList.remove('emoji');
+        square.textContent = ''; // Rimuove il contenuto del quadrato
+        square.classList.remove('emoji'); // Rimuove la classe 'emoji'
     });
-    // Prendiamo un quadrato casuale
-    let randomSquare = squares[Math.floor(Math.random() * 9) + 1];
-    // Aggiungiamo la classe 'emoji'
-    randomSquare.classList.add('emoji');
-    // Salviamo la posizione del quadrato giusto
-    hitPosition = randomSquare.id;
+
+    // Assegna un'emoji casuale a ogni quadrato
+    squares.forEach((square) => {
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+        square.textContent = randomEmoji; // Imposta un'emoji casuale
+    });
+
+    // Seleziona un quadrato casuale per l'emoji corretta
+    const randomSquare = squares[Math.floor(Math.random() * squares.length)];
+    randomSquare.textContent = correctEmoji; // Imposta l'emoji corretta
+    randomSquare.classList.add('emoji'); // Aggiungi la classe 'emoji'
+    hitPosition = randomSquare.id; // Salva la posizione del quadrato corretto
+
+     // Fai scomparire l'emoji dopo un breve intervallo
+     setTimeout(() => {
+        randomSquare.textContent = ''; // Rimuove l'emoji
+        randomSquare.classList.remove('emoji'); // Rimuove la classe 'emoji'
+        hitPosition = null; // Resetta la posizione corretta
+    }, 500); // L'emoji scompare dopo 500ms
 }
 
 function moveEmoji() {
@@ -40,16 +56,19 @@ function countdown() {
 }
 
 squares.forEach((square) => {
-    // Aggiungi un evento di ascolto per il click su ogni quadrato
     square.addEventListener('mousedown', () => {
-        // Se il quadrato cliccato è quello giusto
-        if (square.id === hitPosition) {
+        if (square.textContent === correctEmoji) {
             result++; // Incrementa il punteggio
             score.textContent = result; // Aggiorna il punteggio sullo schermo
             hitPosition = null; // Resetta l'indice dell'emoji
+        } else {
+            result--; // Decrementa il punteggio
+            if (result < 0) result = 0; // Evita punteggi negativi
+            score.textContent = result; // Aggiorna il punteggio sullo schermo
         }
     });
 });
 
+
 moveEmoji();
-let countdownTimerId = setInterval(countdown, 1000);
+timerId = setInterval(randomSquare, 800); // cambia emoji ogni 800ms
